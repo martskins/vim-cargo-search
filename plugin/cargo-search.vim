@@ -1,15 +1,6 @@
 augroup cargosearch
   autocmd!
-  autocmd! FileType cargosearch
-        \ map <silent> <CR> :call SelectCrate()<CR>
-        \ map <silent> <ESC> :bd<CR>
   autocmd! FileType rust command! -nargs=? CargoSearch call CargoSearch(<f-args>)
-
-  function! SelectCrate()
-    :normal! yy
-    :bd
-    :e Cargo.toml
-  endfunction
 
   function! CargoSearch(...)
     if a:0 == 0
@@ -21,9 +12,19 @@ augroup cargosearch
     let l:height = l:limit + 3
     let l:width = float2nr(&columns * 0.8)
     let l:cmd = 'cargo search --limit ' . l:limit . ' ' . a:1
-    let l:data = split(system(l:cmd), '\n')
+    let s:data = split(system(l:cmd), '\n')
 
     if has('nvim')
+      autocmd! FileType cargosearch
+            \ map <silent> <CR> :call CrateSelected()<CR>
+            \ map <silent> <ESC> :bd<CR>
+
+      function! CrateSelected()
+        :normal! yy
+        :bd
+        :e Cargo.toml
+      endfunction
+
       let opts = {
           \ 'relative': 'editor',
           \ 'row': float2nr(&lines / 2) - l:height,
@@ -34,10 +35,18 @@ augroup cargosearch
           \ }
       let l:buf = nvim_create_buf(1, 1)
       :call nvim_open_win(l:buf, v:true, opts)
-      :call nvim_buf_set_lines(l:buf, 0, -1, v:false, l:data)
+      :call nvim_buf_set_lines(l:buf, 0, -1, v:false, s:data)
       :call nvim_buf_set_option(l:buf, 'filetype', 'cargosearch')
     else
-      :echo 'Only NeoVim is supported'
+      function! CrateSelected(id, option)
+        let @@ = s:data[a:option - 1] . "\n"
+        :e Cargo.toml
+      endfunction
+
+      let popmenu = popup_menu(s:data, #{
+            \ filter: 'popup_filter_menu',
+            \ callback: 'CrateSelected',
+            \ })
     endif
   endfunction
 augroup END
