@@ -10,8 +10,6 @@ If you are using vim-plug, you can install this plugin by adding:
 
 ## Usage
 
-Currently, only neovim is supported.
-
 `:CargoSearch crate-name`
 
 Select the crate you want by pressing `<CR>`, this will yank the crate to your default register and open `Cargo.toml` for you.
