@@ -15,10 +15,6 @@ augroup cargosearch
     let s:data = split(system(l:cmd), '\n')
 
     if has('nvim')
-      autocmd! FileType cargosearch
-            \ map <silent> <CR> :call CrateSelected()<CR>
-            \ map <silent> <ESC> :bd<CR>
-
       function! CrateSelected()
         :normal! yy
         :bd
@@ -50,3 +46,9 @@ augroup cargosearch
     endif
   endfunction
 augroup END
+
+augroup cargosearchresults
+  autocmd FileType cargosearch map <silent> <CR> :call CrateSelected()<CR>
+  autocmd FileType cargosearch map <silent> <ESC> :bd<CR>
+augroup END
+
