@@ -1,14 +1,8 @@
-function cs#CrateSelected()
-  if has('nvim')
+function cs#NvimCrateSelected()
     :normal! yy
     :bd
     :e Cargo.toml
     :normal G
-  else
-    let @@ = s:data[a:option - 1] . "\n"
-    :e Cargo.toml
-    :normal G
-  endif
 endfunction
 
 function! cs#CargoSearch(...)
@@ -37,9 +31,15 @@ function! cs#CargoSearch(...)
     :call nvim_buf_set_lines(l:buf, 0, -1, v:false, s:data)
     :call nvim_buf_set_option(l:buf, 'filetype', 'cargosearch')
   else
+    function! VimCrateSelected(id, result)
+        let @@ = s:data[a:result - 1] . "\n"
+        :e Cargo.toml
+        :normal G
+    endfunction
+
     let popmenu = popup_menu(s:data, #{
           \ filter: 'popup_filter_menu',
-          \ callback: 'cs#CrateSelected',
+          \ callback: 'VimCrateSelected',
           \ })
   endif
 endfunction
