@@ -32,6 +32,10 @@ function! cs#CargoSearch(...)
     :call nvim_buf_set_option(l:buf, 'filetype', 'cargosearch')
   else
     function! VimCrateSelected(id, result)
+        if a:result ==# -1
+          return
+        endif
+
         let @@ = s:data[a:result - 1] . "\n"
         :e Cargo.toml
         :normal G
