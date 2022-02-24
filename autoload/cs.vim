@@ -1,8 +1,8 @@
 function cs#NvimCrateSelected()
-    :normal! yy
+    :normal! v0f";y
     :bd
     :e Cargo.toml
-    :normal G
+    :call search('dependencies', 'e')
 endfunction
 
 function! cs#CargoSearch(...)
